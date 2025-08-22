@@ -1,0 +1,93 @@
+:root {
+  color-scheme: light dark;
+  font-family: ui-sans-serif, system-ui, Segoe UI, Roboto, Helvetica, Arial;
+}
+
+body {
+  margin: 0;
+  background: linear-gradient(135deg, #2e026d, #15162c);
+  color: #f6f7fb;
+  min-height: 100vh;
+}
+
+.container {
+  max-width: 720px;
+  margin: 0 auto;
+  padding: 32px;
+}
+
+h1 {
+  margin: 0 0 16px;
+  font-size: 2rem;
+}
+
+label {
+  font-weight: 600;
+  margin-top: 12px;
+  display: block;
+}
+
+input {
+  width: 100%;
+  padding: 12px;
+  margin: 6px 0 12px;
+  border-radius: 12px;
+  border: 1px solid #333;
+  background: #f6f7fb;
+  color: #111;
+  font-size: 1rem;
+}
+
+button {
+  padding: 12px 16px;
+  border-radius: 12px;
+  border: none;
+  cursor: pointer;
+  margin-right: 8px;
+  margin-top: 8px;
+  transition: all 0.2s ease;
+}
+
+button:hover {
+  opacity: 0.85;
+}
+
+button.primary {
+  background: #00cc88;
+  color: #0b1020;
+}
+
+button.danger {
+  background: #ff4d6d;
+  color: white;
+}
+
+button.secondary {
+  background: #8bd3ff;
+  color: #0b1020;
+}
+
+.card {
+  background: rgba(255, 255, 255, 0.08);
+  padding: 20px;
+  border-radius: 16px;
+  margin-top: 16px;
+}
+
+.notice {
+  background: #fffbcc;
+  color: #333;
+  padding: 12px;
+  border-radius: 12px;
+  margin: 16px 0;
+  border: 1px solid #f0e68c;
+}
+
+a {
+  color: #8bd3ff;
+  text-decoration: none;
+}
+
+a:hover {
+  text-decoration: underline;
+}
