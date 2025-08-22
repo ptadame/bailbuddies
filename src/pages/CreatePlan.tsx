@@ -1,6 +1,6 @@
-import { ref, set, update } from 'firebase/database'
+import { ref, set } from 'firebase/database'
 import { db } from '../firebase'
-import { useEffect, useMemo, useState } from 'react'
+import { useEffect, useState } from 'react'
 import QRCode from 'qrcode'
 
 function rand(n = 12) {
@@ -34,12 +34,10 @@ function todayISO() {
 
 export default function CreatePlan() {
   const [title, setTitle] = useState('Dinner Friday 7pm')
-  const [date, setDate] = useState(todayISO())         // new field
-  const [time, setTime] = useState('19:00')            // new field (24h format)
-  const [threshold, setThreshold] = useState(0.8)      // fixed intent: 80% for 10+
-  const [created, setCreated] = useState<{
-    publicUrl: string, voteUrl: string, hostUrl: string
-  } | null>(null)
+  const [date, setDate] = useState(todayISO())
+  const [time, setTime] = useState('19:00')
+  const [threshold, setThreshold] = useState(0.8)
+  const [created, setCreated] = useState<{ publicUrl: string, voteUrl: string, hostUrl: string } | null>(null)
   const [qr, setQr] = useState<string>('')
 
   // Generate a QR code for the Voting link when created
@@ -56,24 +54,19 @@ export default function CreatePlan() {
 
   async function create() {
     const planKey = rand(8)
-    const writeKey = rand(12)  // used by voters
-    const hostKey  = rand(16)  // secret for host-only actions
+    const writeKey = rand(12)
+    const hostKey  = rand(16)
 
-    // Write plan (public) and hostKey (private) in two locations
     await set(ref(db, `plans/${planKey}`), {
       title,
       createdAt: new Date().toISOString(),
-      threshold,   // kept for data completeness, app enforces 80% for >=10
-      date,        // new
-      time         // new
+      threshold,
+      date,
+      time
     })
 
-    // Store hostKey privately
-    await set(ref(db, `plans_private/${planKey}`), {
-      hostKey
-    })
+    await set(ref(db, `plans_private/${planKey}`), { hostKey })
 
-    // Build links
     const base = location.origin
     const publicUrl = `${base}/#/p/${planKey}`
     const voteUrl   = `${base}/#/p/${planKey}?w=${writeKey}`
@@ -88,28 +81,14 @@ export default function CreatePlan() {
       <p>Create a plan. If everyone secretly cancels, you’ll all celebrate 🎉</p>
 
       <label>Plan title</label>
-      <input
-        value={title}
-        onChange={(e) => setTitle(e.target.value)}
-        placeholder="e.g., Brunch Sunday 11am"
-      />
+      <input value={title} onChange={(e) => setTitle(e.target.value)} placeholder="e.g., Brunch Sunday 11am" />
 
-      {/* New Date + Time fields */}
       <label>Date</label>
-      <input
-        type="date"
-        value={date}
-        onChange={(e) => setDate(e.target.value)}
-      />
+      <input type="date" value={date} onChange={(e) => setDate(e.target.value)} />
 
       <label>Time</label>
-      <input
-        type="time"
-        value={time}
-        onChange={(e) => setTime(e.target.value)}
-      />
+      <input type="time" value={time} onChange={(e) => setTime(e.target.value)} />
 
-      {/* New message describing the rule; numeric input remains but prefilled at 0.8 */}
       <label>
         If more than 80% of your party of 10 or more people cancel, you will get a notification
         and an option to cancel or stay strong.
@@ -132,18 +111,14 @@ export default function CreatePlan() {
           <p style={{ display: 'flex', gap: 8, alignItems: 'center', flexWrap: 'wrap' }}>
             <a href={created.publicUrl}>{created.publicUrl}</a>
             <button className="secondary" onClick={() => copy(created.publicUrl)}>Copy</button>
-            {canShare() && (
-              <button className="secondary" onClick={() => shareLink(created.publicUrl, 'Public link')}>Share</button>
-            )}
+            {canShare() && <button className="secondary" onClick={() => shareLink(created.publicUrl, 'Public link')}>Share</button>}
           </p>
 
           <p style={{ marginTop: 12 }}><b>Voting link (share this):</b></p>
           <p style={{ display: 'flex', gap: 8, alignItems: 'center', flexWrap: 'wrap' }}>
             <a href={created.voteUrl}>{created.voteUrl}</a>
             <button className="secondary" onClick={() => copy(created.voteUrl)}>Copy</button>
-            {canShare() && (
-              <button className="secondary" onClick={() => shareLink(created.voteUrl, 'Voting link')}>Share</button>
-            )}
+            {canShare() && <button className="secondary" onClick={() => shareLink(created.voteUrl, 'Voting link')}>Share</button>}
           </p>
 
           <p style={{ marginTop: 12 }}><b>Host link (do not share):</b></p>
@@ -152,7 +127,6 @@ export default function CreatePlan() {
             <button className="secondary" onClick={() => copy(created.hostUrl)}>Copy</button>
           </p>
 
-          {/* QR for the voting link */}
           {qr && (
             <>
               <p style={{ marginTop: 12 }}><b>QR (Voting link):</b></p>
@@ -166,3 +140,4 @@ export default function CreatePlan() {
     </div>
   )
 }
+
