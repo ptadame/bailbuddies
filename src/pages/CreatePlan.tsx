@@ -2,6 +2,10 @@ import { ref, set } from 'firebase/database'
 import { db } from '../firebase'
 import { useEffect, useState } from 'react'
 import QRCode from 'qrcode'
+import { InlineAd } from '../Components/ads' // <- matches your folder name
+
+// --- AdSense slot IDs (replace these strings with your real slot IDs when ready) ---
+const INLINE_SLOT = '1234567890' // Inline content ad
 
 function rand(n = 12) {
   const c = 'abcdefghijklmnopqrstuvwxyz0123456789'
@@ -20,7 +24,7 @@ async function shareLink(url: string, title: string) {
   try {
     // @ts-ignore
     await navigator.share({ title: 'Bail Buddies', text: title, url })
-  } catch { /* user cancelled */ }
+  } catch {}
 }
 
 // Defaults for Date/Time
@@ -36,19 +40,19 @@ export default function CreatePlan() {
   const [title, setTitle] = useState('Dinner Friday 7pm')
   const [date, setDate] = useState(todayISO())
   const [time, setTime] = useState('19:00')
-  const [threshold, setThreshold] = useState(0.8)
+  const [threshold, setThreshold] = useState(0.8) // informational; app enforces 80% for >=10
+  const [enableMemes, setEnableMemes] = useState(true) // host meme toggle
+
   const [created, setCreated] = useState<{ publicUrl: string, voteUrl: string, hostUrl: string } | null>(null)
   const [qr, setQr] = useState<string>('')
 
-  // Generate a QR code for the Voting link when created
+  // Build QR for Voting link
   useEffect(() => {
     (async () => {
       if (created?.voteUrl) {
         const data = await QRCode.toDataURL(created.voteUrl)
         setQr(data)
-      } else {
-        setQr('')
-      }
+      } else setQr('')
     })()
   }, [created])
 
@@ -62,17 +66,18 @@ export default function CreatePlan() {
       createdAt: new Date().toISOString(),
       threshold,
       date,
-      time
+      time,
+      enableMemes
     })
 
     await set(ref(db, `plans_private/${planKey}`), { hostKey })
 
     const base = location.origin
-    const publicUrl = `${base}/#/p/${planKey}`
-    const voteUrl   = `${base}/#/p/${planKey}?w=${writeKey}`
-    const hostUrl   = `${base}/#/p/${planKey}?h=${hostKey}`
-
-    setCreated({ publicUrl, voteUrl, hostUrl })
+    setCreated({
+      publicUrl: `${base}/#/p/${planKey}`,
+      voteUrl:   `${base}/#/p/${planKey}?w=${writeKey}`,
+      hostUrl:   `${base}/#/p/${planKey}?h=${hostKey}`
+    })
   }
 
   return (
@@ -95,15 +100,19 @@ export default function CreatePlan() {
         If 9 or less people are in your party, the decision must be unanimous!
       </label>
       <input
-        type="number"
-        step="0.05"
-        min="0.5"
-        max="0.9"
-        value={threshold}
-        onChange={(e) => setThreshold(parseFloat(e.target.value))}
+        type="number" step="0.05" min="0.5" max="0.9"
+        value={threshold} onChange={(e) => setThreshold(parseFloat(e.target.value))}
       />
 
+      <label style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+        <input type="checkbox" checked={enableMemes} onChange={(e)=>setEnableMemes(e.target.checked)} />
+        Allow fun meme GIFs in celebrations
+      </label>
+
       <button onClick={create}>Generate Invite Link</button>
+
+      {/* Inline AdSense unit under the main action */}
+      <InlineAd slot={INLINE_SLOT} />
 
       {created && (
         <div className="card">
@@ -140,4 +149,3 @@ export default function CreatePlan() {
     </div>
   )
 }
-
