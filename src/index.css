@@ -1,30 +1,22 @@
 :root {
   color-scheme: light dark;
-  font-family: ui-sans-serif, system-ui, Segoe UI, Roboto, Helvetica, Arial;
+  font-family: ui-sans-serif, system-ui, Segoe UI, Roboto, Helvetica, Arial, sans-serif;
 }
 
 body {
   margin: 0;
-  background: linear-gradient(135deg, #2e026d, #15162c);
+  background: #0b1020;
   color: #f6f7fb;
-  min-height: 100vh;
 }
 
 .container {
-  max-width: 720px;
+  max-width: 680px;
   margin: 0 auto;
-  padding: 32px;
+  padding: 24px;
 }
 
 h1 {
-  margin: 0 0 16px;
-  font-size: 2rem;
-}
-
-label {
-  font-weight: 600;
-  margin-top: 12px;
-  display: block;
+  margin: 0 0 8px;
 }
 
 input {
@@ -32,10 +24,7 @@ input {
   padding: 12px;
   margin: 6px 0 12px;
   border-radius: 12px;
-  border: 1px solid #333;
-  background: #f6f7fb;
-  color: #111;
-  font-size: 1rem;
+  border: none;
 }
 
 button {
@@ -44,12 +33,6 @@ button {
   border: none;
   cursor: pointer;
   margin-right: 8px;
-  margin-top: 8px;
-  transition: all 0.2s ease;
-}
-
-button:hover {
-  opacity: 0.85;
 }
 
 button.primary {
@@ -63,31 +46,42 @@ button.danger {
 }
 
 button.secondary {
-  background: #8bd3ff;
-  color: #0b1020;
+  background: #1f2a4a;
+  color: #f6f7fb;
 }
 
 .card {
-  background: rgba(255, 255, 255, 0.08);
-  padding: 20px;
+  background: #111835;
+  padding: 16px;
   border-radius: 16px;
-  margin-top: 16px;
+  margin-top: 12px;
 }
 
 .notice {
-  background: #fffbcc;
-  color: #333;
+  background: #1f2a4a;
   padding: 12px;
   border-radius: 12px;
-  margin: 16px 0;
-  border: 1px solid #f0e68c;
+  margin: 12px 0;
 }
 
 a {
   color: #8bd3ff;
-  text-decoration: none;
 }
 
-a:hover {
-  text-decoration: underline;
+/* ✅ Sticky bottom ad */
+.sticky-ad-wrap {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  z-index: 999;
+  background: #0b1020;
+  padding: 4px 0;
+  text-align: center;
+  border-top: 1px solid #222;
+}
+
+/* Push content above sticky ad so it’s not hidden */
+body {
+  padding-bottom: 70px; /* adjust if ad height changes */
 }
